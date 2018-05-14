@@ -53,7 +53,36 @@
 
 	var _base64Image = __webpack_require__(1);
 
+	function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
 	(function () {
+	    let getBase64ImageFromUrl = (() => {
+	        var _ref = _asyncToGenerator(function* (imageUrl) {
+	            var _this = this;
+
+	            debugger;
+	            var res = yield fetch(imageUrl);
+	            var blob = yield res.blob();
+	            console.log(blob);
+
+	            return new Promise(function (resolve, reject) {
+	                var reader = new FileReader();
+	                reader.addEventListener("load", function () {
+	                    resolve(reader.result);
+	                }, false);
+
+	                reader.onerror = function () {
+	                    return reject(_this);
+	                };
+	                reader.readAsDataURL(blob);
+	            });
+	        });
+
+	        return function getBase64ImageFromUrl(_x) {
+	            return _ref.apply(this, arguments);
+	        };
+	    })();
+
 	    Office.initialize = function (reason) {
 	        $(document).ready(function () {
 
@@ -62,29 +91,32 @@
 	            }
 
 	            $('#insert-image').click(insertImage);
-	            $('#insert-html').click(insertHTML);
 	        });
 	    };
 
+	    // function insertImage() {
+	    // 	// getBase64ImageFromUrl('https://localhost:3000/assets/icon-32.png')
+	    // 	getBase64ImageFromUrl('https://localhost:3000/assets/icon-32.png')
+	    //             .then(result => {
+	    //                 console.log(result)
+	    //                 Word.run(function (context) {
+	    //                     context.document.body.insertInlinePictureFromBase64(result, "End");
+	    //                     return context.sync();
+	    //                 })
+	    //                     .catch(function (error) {
+	    //                         console.log("Error: " + error);
+	    //                         if (error instanceof OfficeExtension.Error) {
+	    //                             console.log("Debug info: " + JSON.stringify(error.debugInfo));
+	    //                         }
+	    //                     });
+	    //             })
+	    //  								.catch(err => console.error(err));
+	    // }
+
 	    function insertImage() {
 	        Word.run(function (context) {
-	            debugger;
+
 	            context.document.body.insertInlinePictureFromBase64(_base64Image.base64Image, "End");
-
-	            return context.sync();
-	        }).catch(function (error) {
-	            console.log("Error: " + error);
-	            if (error instanceof OfficeExtension.Error) {
-	                console.log("Debug info: " + JSON.stringify(error.debugInfo));
-	            }
-	        });
-	    }
-
-	    function insertHTML() {
-	        Word.run(function (context) {
-
-	            const blankParagraph = context.document.body.paragraphs.getLast().insertParagraph("", "After");
-	            blankParagraph.insertHtml('<p style="font-family: verdana;">Inserted HTML.</p><p>Another paragraph</p>', "End");
 
 	            return context.sync();
 	        }).catch(function (error) {

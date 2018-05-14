@@ -4,8 +4,7 @@
  */
 
 'use strict';
-
-import { base64Image } from "./base64Image";
+// import { base64Image } from "./base64Image";
 
 (function () {
     Office.initialize = function (reason) {
@@ -16,40 +15,59 @@ import { base64Image } from "./base64Image";
             }
             
             $('#insert-image').click(insertImage);
-            $('#insert-html').click(insertHTML);
-
         });
     };
 
+		function insertImage() {
+			// getBase64ImageFromUrl('https://localhost:3000/assets/icon-32.png')
+			getBase64ImageFromUrl('https://localhost:3000/assets/icon-32.png')
+		            .then(result => {
+		                console.log(result)
+		                Word.run(function (context) {
+		                    context.document.body.insertInlinePictureFromBase64(result, "End");
+		                    return context.sync();
+										})
+		                .catch(function (error) {
+		                    console.log("Error: " + error);
+		                    if (error instanceof OfficeExtension.Error) {
+		                        console.log("Debug info: " + JSON.stringify(error.debugInfo));
+		                    }
+										});
+								})
+								.catch(err => console.error(err));
+		}
 
-    function insertImage() {
-        Word.run(function (context) {
-            debugger;
-            context.document.body.insertInlinePictureFromBase64(base64Image, "End");
+		// function insertImage() {
+		//     Word.run(function (context) {
+		        
+		//         context.document.body.insertInlinePictureFromBase64(base64Image, "End");
 
-            return context.sync();
+		//         return context.sync();
+		//     })
+		//     .catch(function (error) {
+		//         console.log("Error: " + error);
+		//         if (error instanceof OfficeExtension.Error) {
+		//             console.log("Debug info: " + JSON.stringify(error.debugInfo));
+		//         }
+		//     });
+		// }
+
+    async function getBase64ImageFromUrl(imageUrl) {
+        var res = await fetch(imageUrl);
+        var blob = await res.blob();
+        console.log(blob)
+
+        return new Promise((resolve, reject) => {
+            var reader  = new FileReader();
+            reader.addEventListener("load", function () {
+                resolve(reader.result);
+            }, false);
+
+            reader.onerror = () => {
+                return reject(this);
+            };
+            reader.readAsDataURL(blob);
         })
-        .catch(function (error) {
-            console.log("Error: " + error);
-            if (error instanceof OfficeExtension.Error) {
-                console.log("Debug info: " + JSON.stringify(error.debugInfo));
-            }
-        });
     }
 
-    function insertHTML() {
-        Word.run(function (context) {
-            
-            const blankParagraph = context.document.body.paragraphs.getLast().insertParagraph("", "After");
-            blankParagraph.insertHtml('<p style="font-family: verdana;">Inserted HTML.</p><p>Another paragraph</p>', "End");
-
-            return context.sync();
-        })
-        .catch(function (error) {
-            console.log("Error: " + error);
-            if (error instanceof OfficeExtension.Error) {
-                console.log("Debug info: " + JSON.stringify(error.debugInfo));
-            }
-        });
-    }  
 })();
