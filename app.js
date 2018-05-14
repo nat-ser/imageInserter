@@ -64,40 +64,11 @@
 				var canvas = document.createElement("canvas"); 
 				var ctx = canvas.getContext("2d"); 
 				var img = document.getElementById("preview");
+				canvas.width = 400
+				canvas.height = 320
+				ctx.drawImage(img, 0, 0, (img.width * 4), (img.height * 4)); 
 
 
-
-				// var img = new Image(60, 45);   // using optional size for image
-				img.onload = function() {
-					debugger;
-						  // use the intrinsic size of image in CSS pixels for the canvas element
-					canvas.width = this.naturalWidth;
-					canvas.height = this.naturalHeight;
-
-					// will draw the image as 300x227 ignoring the custom size of 60x45
-					// given in the constructor
-					ctx.drawImage(this, 0, 0);
-
-					// To use the custom size we'll have to specify the scale parameters 
-					// using the element's width and height properties - lets draw one 
-					// on top in the corner:
-					ctx.drawImage(this, 0, 0, this.width, this.height);	
-				}
-
-
-
-
-
-				img.src = "https://localhost:3000/assets/kn.jpg"
-				debugger;
-
-				// var result = ScaleImage(img.width, img.height, 300, 200, true);
-  		// 		ctx.drawImage(img, result.targetleft, result.targettop, result.width, result.height);
-
-				// ctx.drawImage(img, 300, 0, 300, img.height * (300/img.width)); 
-
-				//create the base64 encoded string and take everything after the comma
-				//format is normally data:Content-Type;base64,TheStringWeActuallyNeed
 				var base64 = canvas.toDataURL().split(",")[1];
 				 
 				//Insert the image into the word document as an image created from base64 encoded string
